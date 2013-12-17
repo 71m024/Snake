@@ -1,12 +1,9 @@
 package ch.dorf10.snake;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.HashSet;
-import java.util.Set;
 
 public class SchlangenGlied extends GameElement {
 

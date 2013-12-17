@@ -14,11 +14,6 @@ import javax.swing.JFrame;
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
 	
-	/**
-	 * Referenz auf das Game-Objekt.
-	 */
-	private Game game;
-	
 	private Spielfeld spielfeld;
 
 
@@ -27,7 +22,6 @@ public class GUI extends JFrame {
      * als KeyListener.
      */
     public GUI(Game game) {
-        this.game = game;
         setTitle("Snake V4.0");
         setBounds(new Rectangle(780, 800));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
