@@ -1,36 +1,42 @@
 package ch.dorf10.snake;
 
+import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class SchlangenKopf extends Schlangenglied implements KeyListener{
+public class SchlangenKopf extends SchlangenGlied implements KeyListener{
 	
-	public static final Point DIRECTION_LEFT = new Point(-1, 0);
-	public static final Point DIRECTION_UP = new Point(0, -1);
-	public static final Point DIRECTION_RIGHT = new Point(1, 0);
-	public static final Point DIRECTION_DOWN = new Point(0, 1);
-	public static final Point DIRECTION_START = DIRECTION_RIGHT;
-	public static final int SLEEP_TIME_MILLS_DEFAULT = 500;
-	
-	private Point direction;
+	private boolean alive = true;
 
-	protected SchlangenKopf(Rectangle masse) {
-		super(masse);
+	protected SchlangenKopf(Rectangle masse, Color color) {
+		super(masse, color);
 		direction = DIRECTION_START;
+	}
+	
+	public void die() {
+		alive = false;
+	}
+	
+	public void eatDiamant(Diamant dia) {
+		for (int i = 0; i < dia.getPoints(); i++) {
+			addGlied();
+		}
+		dia.setCatched();
 	}
 	
 	@Override
 	public void draw(Graphics g) {
-		move();
+		if (alive) {
+			super.move();
+		}
 		super.draw(g);
-	}
-	
-	public void move() {
-		masse.x += direction.getX() * Game.UNIT;
-		masse.y += direction.getY() * Game.UNIT;
+		
+		//draw eyes
+		g.setColor(Color.WHITE);
+		g.fillOval((int)(masse.getX() + Game.UNIT * 0.2), (int)(masse.getY() + Game.UNIT * 0.4), (int)(masse.getWidth() / 6), (int)(masse.getHeight() / 6));
+		g.fillOval((int)(masse.getX() + Game.UNIT * 0.7), (int)(masse.getY() + Game.UNIT * 0.4), (int)(masse.getWidth() / 6), (int)(masse.getHeight() / 6));
 	}
 
 	@Override

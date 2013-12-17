@@ -18,11 +18,20 @@ public class Spielgrenze extends GameElement {
 		g.drawRect((int)bounds.getX(), (int)bounds.getY(), (int)bounds.getWidth(), (int)bounds.getHeight());
 	}
 	
-	public int getVerticalBorder() {
+	public int getY() {
 		return super.masse.y;
 	}
 	
-	public int getHorizontalBorder() {
+	public int getX() {
 		return super.masse.x;
+	}
+	
+	@Override
+	public boolean colides(SchlangenKopf head) {
+		if (!super.colides(head)) {
+			head.die();
+			return true;
+		}
+		return false;
 	}
 }

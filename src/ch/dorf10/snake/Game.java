@@ -1,5 +1,6 @@
 package ch.dorf10.snake;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyListener;
@@ -15,18 +16,16 @@ public class Game {
     public Game() {
     	Spielgrenze spielgrenze = new Spielgrenze(new Rectangle(10, 10, 20 * UNIT, 20 * UNIT));
     	schlange = new SchlangenKopf(new Rectangle(
-    			spielgrenze.getHorizontalBorder() + 2*UNIT,
-    			spielgrenze.getVerticalBorder() + 2*UNIT,
+    			spielgrenze.getX() + 2*UNIT,
+    			spielgrenze.getY() + 2*UNIT,
     			1*UNIT,
-    			1*UNIT));
-    	
-    	schlange.addGlied();
+    			1*UNIT), new Color(140, 0, 0));
     	
     	gameElements.add(spielgrenze);
     	for (int i = 1; i < getRandomNumber(4, 12); i++) {
     		Rectangle diamantRect = new Rectangle(
-    				spielgrenze.getHorizontalBorder() + getRandomNumber(0, 19) * UNIT,
-    				spielgrenze.getVerticalBorder() + getRandomNumber(0, 19) * UNIT,
+    				spielgrenze.getX() + getRandomNumber(0, 19) * UNIT,
+    				spielgrenze.getY() + getRandomNumber(0, 19) * UNIT,
     				1 * UNIT,
     				1 * UNIT);
     		gameElements.add(new Diamant(diamantRect, i));
@@ -44,6 +43,7 @@ public class Game {
 
     public void draw(Graphics g) {
     	for (GameElement gameElement : gameElements) {
+    		gameElement.colides(schlange);
     		gameElement.draw(g);
     	}
     }
