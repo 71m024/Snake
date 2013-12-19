@@ -11,27 +11,8 @@ public class Spielfeld extends JPanel{
 
 	public Spielfeld(Game game) {
 		super();
-		
 		this.game = game;
-		
 		this.setFocusable(true);
-		
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while(true) {
-					Spielfeld.this.repaint();
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-    		
-    	}).start();
 	}
 		
 	/**
@@ -41,7 +22,8 @@ public class Spielfeld extends JPanel{
 	 */
 	@Override
 	public void paintComponent(Graphics g){
-	  game.draw(g);
+		game.setSize(getSize());
+		game.draw(g);
 	}
 	
 }

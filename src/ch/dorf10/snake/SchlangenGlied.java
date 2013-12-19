@@ -7,6 +7,8 @@ import java.awt.Rectangle;
 
 public class SchlangenGlied extends GameElement {
 
+	private static final long serialVersionUID = 6662504687803015816L;
+	
 	public static final Point DIRECTION_LEFT = new Point(-1, 0);
 	public static final Point DIRECTION_UP = new Point(0, -1);
 	public static final Point DIRECTION_RIGHT = new Point(1, 0);
@@ -18,8 +20,8 @@ public class SchlangenGlied extends GameElement {
 	private Color color;
 	private SchlangenGlied nextGlied;
 
-	protected SchlangenGlied(Rectangle masse, Color color) {
-		super(masse);
+	protected SchlangenGlied(Rectangle masse, IntHolder unit, Color color) {
+		super(masse, unit);
 		this.color = color;
 	}
 	
@@ -27,10 +29,10 @@ public class SchlangenGlied extends GameElement {
 		if (nextGlied == null) {
 			
 			//create/add new glied
-			Rectangle newMasse = (Rectangle) masse.clone();
-			newMasse.x -= direction.x * Game.UNIT;
-			newMasse.y -= direction.y * Game.UNIT;
-			SchlangenGlied newGlied = new SchlangenGlied(newMasse, color.brighter());
+			Rectangle newMasse = (Rectangle) getBounds().clone();
+			newMasse.x -= direction.x * width;
+			newMasse.y -= direction.y * height;
+			SchlangenGlied newGlied = new SchlangenGlied(newMasse, unit, Zufallsgenerator.zufallsFarbe(color, 20));
 			newGlied.setDirection((Point) direction.clone());
 			nextGlied = newGlied;
 			
@@ -40,8 +42,8 @@ public class SchlangenGlied extends GameElement {
 	}
 	
 	public void move() {
-		masse.x += direction.getX() * Game.UNIT;
-		masse.y += direction.getY() * Game.UNIT;
+		this.x += direction.getX() * width;
+		this.y += direction.getY() * height;
 		if (nextGlied != null) {
 			nextGlied.move();
 			nextGlied.setDirection((Point) direction.clone());
@@ -49,12 +51,14 @@ public class SchlangenGlied extends GameElement {
 	}
     
 	public void draw(Graphics g) {
-		Rectangle masse = super.masse;
-		g.setColor(color);
-		g.fillOval((int)masse.getX(), (int)masse.getY(), (int)masse.getWidth(), (int)masse.getHeight());
 		if (nextGlied != null) {
 			nextGlied.draw(g);
 		}
+		
+		Rectangle masse = getAbsoluteRect();
+		
+		g.setColor(color);
+		g.fillOval((int)masse.getX(), (int)masse.getY(), (int)masse.getWidth(), (int)masse.getHeight());
 	}
 
 	public Point getDirection() {

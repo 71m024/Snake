@@ -6,24 +6,18 @@ import java.awt.Rectangle;
 
 public class Spielgrenze extends GameElement {
 	
-	protected Spielgrenze(Rectangle masse) {
-		super(masse);
+	private static final long serialVersionUID = -4765133453327219906L;
+
+	protected Spielgrenze(Rectangle masse, IntHolder unit) {
+		super(masse, unit);
 	}
 
 	public void draw(Graphics g) {
-		Rectangle bounds = super.masse;
+		Rectangle bounds = getAbsoluteRect();
 		g.setColor(new Color(226, 255, 255));
 		g.fillRect((int)bounds.getX(), (int)bounds.getY(), (int)bounds.getWidth(), (int)bounds.getHeight());
 		g.setColor(Color.black);
 		g.drawRect((int)bounds.getX(), (int)bounds.getY(), (int)bounds.getWidth(), (int)bounds.getHeight());
-	}
-	
-	public int getY() {
-		return super.masse.y;
-	}
-	
-	public int getX() {
-		return super.masse.x;
 	}
 	
 	@Override

@@ -15,21 +15,45 @@ import javax.swing.JFrame;
 public class GUI extends JFrame {
 	
 	private Spielfeld spielfeld;
+	private Game game;
 
 
     /**
      * Konstruktor. Initialisiert den Frame. Registriert das Game-Objekt
      * als KeyListener.
      */
-    public GUI(Game game) {
-        setTitle("Snake V4.0");
-        setBounds(new Rectangle(780, 800));
+    public GUI() {
+        setTitle("Snake Timo");
+        setBounds(new Rectangle(720, 720));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        game = new Game(getBounds().getSize());
         spielfeld = new Spielfeld(game);
-       	spielfeld.setBounds(new Rectangle(800, 800));
         setContentPane(spielfeld);
         setVisible(true);
         spielfeld.addKeyListener(game.getKeyListener());
+        startGameLoop();
+    }
+    
+    private void startGameLoop() {
+    	new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while(true) {
+					double lastTime = System.currentTimeMillis();
+					while (true)
+					{
+					  double current = System.currentTimeMillis();
+					  double elapsed = current - lastTime;
+					  GUI.this.game.update(elapsed);
+					  GUI.this.spielfeld.repaint();
+					  
+					  lastTime = current;
+					}
+				}
+			}
+    		
+    	}).start();
     }
 
     /**

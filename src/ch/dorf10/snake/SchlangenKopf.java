@@ -8,10 +8,13 @@ import java.awt.event.KeyListener;
 
 public class SchlangenKopf extends SchlangenGlied implements KeyListener{
 	
+	private static final long serialVersionUID = 8288992889070558225L;
+	
 	private boolean alive = true;
+	private int stomache = 0;
 
-	protected SchlangenKopf(Rectangle masse, Color color) {
-		super(masse, color);
+	protected SchlangenKopf(Rectangle masse, IntHolder unit, Color color) {
+		super(masse, unit, color);
 		direction = DIRECTION_START;
 	}
 	
@@ -20,23 +23,31 @@ public class SchlangenKopf extends SchlangenGlied implements KeyListener{
 	}
 	
 	public void eatDiamant(Diamant dia) {
-		for (int i = 0; i < dia.getPoints(); i++) {
-			addGlied();
-		}
+		stomache += dia.getPoints();
 		dia.setCatched();
 	}
 	
 	@Override
-	public void draw(Graphics g) {
+	public void move() {
 		if (alive) {
+			if (stomache > 0) {
+				addGlied();
+				stomache--;
+			}
 			super.move();
 		}
+	}
+	
+	@Override
+	public void draw(Graphics g) {
 		super.draw(g);
+		
+		Rectangle masse = getAbsoluteRect();
 		
 		//draw eyes
 		g.setColor(Color.WHITE);
-		g.fillOval((int)(masse.getX() + Game.UNIT * 0.2), (int)(masse.getY() + Game.UNIT * 0.4), (int)(masse.getWidth() / 6), (int)(masse.getHeight() / 6));
-		g.fillOval((int)(masse.getX() + Game.UNIT * 0.7), (int)(masse.getY() + Game.UNIT * 0.4), (int)(masse.getWidth() / 6), (int)(masse.getHeight() / 6));
+		g.fillOval((int)(masse.getX() + masse.getWidth() * 0.2), (int)(masse.getY() + masse.getHeight() * 0.4), (int)(masse.getWidth() / 6), (int)(masse.getHeight() / 6));
+		g.fillOval((int)(masse.getX() + masse.getWidth() * 0.7), (int)(masse.getY() + masse.getHeight() * 0.4), (int)(masse.getWidth() / 6), (int)(masse.getHeight() / 6));
 	}
 
 	@Override
