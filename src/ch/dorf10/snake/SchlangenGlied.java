@@ -4,25 +4,63 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.List;
 
 public class SchlangenGlied extends GameElement {
 
 	private static final long serialVersionUID = 6662504687803015816L;
 	
-	public static final Point DIRECTION_LEFT = new Point(-1, 0);
-	public static final Point DIRECTION_UP = new Point(0, -1);
-	public static final Point DIRECTION_RIGHT = new Point(1, 0);
-	public static final Point DIRECTION_DOWN = new Point(0, 1);
-	public static final Point DIRECTION_START = DIRECTION_RIGHT;
-	
-	protected Point direction;
-	
 	private Color color;
-	private SchlangenGlied nextGlied;
+	protected SchlangenGlied nextGlied;
+	protected SchlangenGlied previousGlied;
 
 	protected SchlangenGlied(Rectangle masse, IntHolder unit, Color color) {
 		super(masse, unit);
 		this.color = color;
+	}
+	
+	public void setNextGlied(SchlangenGlied glied) {
+		if (nextGlied != null) {
+			nextGlied.removePreviousGlied();
+		}
+		nextGlied = glied;
+		if (glied.getPreviousGlied() != this) {
+			glied.setPreviousGlied(this);
+		}
+	}
+	
+	public void setPreviousGlied(SchlangenGlied glied) {
+		if (previousGlied != null) {
+			previousGlied.removeNextGlied();
+		}
+		previousGlied = glied;
+		if (glied.getNextGlied() != this) {
+			glied.setNextGlied(this);
+		}
+	}
+	
+	public void removeNextGlied() {
+		SchlangenGlied oldNextGlied = nextGlied;
+		nextGlied = null;
+		if (oldNextGlied != null) {
+			nextGlied.removePreviousGlied();
+		}
+	}
+	
+	public void removePreviousGlied() {
+		SchlangenGlied oldPreviousGlied = previousGlied;
+		previousGlied = null;
+		if (oldPreviousGlied != null) {
+			previousGlied.removeNextGlied();
+		}
+	}
+	
+	public SchlangenGlied getNextGlied() {
+		return nextGlied;
+	}
+	
+	public SchlangenGlied getPreviousGlied() {
+		return previousGlied;
 	}
 	
 	protected void addGlied() {
@@ -30,11 +68,10 @@ public class SchlangenGlied extends GameElement {
 			
 			//create/add new glied
 			Rectangle newMasse = (Rectangle) getBounds().clone();
-			newMasse.x -= direction.x * width;
-			newMasse.y -= direction.y * height;
+			newMasse.x -= getDirection().x * width;
+			newMasse.y -= getDirection().y * height;
 			SchlangenGlied newGlied = new SchlangenGlied(newMasse, unit, Zufallsgenerator.zufallsFarbe(color, 20));
-			newGlied.setDirection((Point) direction.clone());
-			nextGlied = newGlied;
+			setNextGlied(newGlied);
 			
 		} else {
 			nextGlied.addGlied();
@@ -42,11 +79,10 @@ public class SchlangenGlied extends GameElement {
 	}
 	
 	public void move() {
-		this.x += direction.getX() * width;
-		this.y += direction.getY() * height;
+		this.x += getDirection().getX() * width;
+		this.y += getDirection().getY() * height;
 		if (nextGlied != null) {
 			nextGlied.move();
-			nextGlied.setDirection((Point) direction.clone());
 		}
 	}
     
@@ -62,11 +98,7 @@ public class SchlangenGlied extends GameElement {
 	}
 
 	public Point getDirection() {
-		return direction;
-	}
-
-	public void setDirection(Point direction) {
-		this.direction = direction;
+		return new Point(previousGlied.x - x, previousGlied.y - y);
 	}
 	
 	public Color getColor() {
@@ -76,11 +108,25 @@ public class SchlangenGlied extends GameElement {
 	public void setColor(Color color) {
 		this.color = color;
 	}
+	
+	public void addAllGlieder(List<SchlangenGlied> glieder) {
+		glieder.add(this);
+		if (nextGlied != null) {
+			nextGlied.addAllGlieder(glieder);
+		}
+	}
+	
+	public static Point invertDirection(Point direction) {
+		Point newDirection = (Point) direction.clone();
+		newDirection.x *= -1;
+		newDirection.y *= -1;
+		return newDirection;
+	}
 
 	@Override
 	public boolean colides(SchlangenKopf head) {
 		if (super.colides(head) ? true : (nextGlied == null ? false : nextGlied.colides(head))) {
-			head.die();
+			//head.die();
 			return true;
 		}
 		return false;

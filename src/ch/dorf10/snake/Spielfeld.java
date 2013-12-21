@@ -1,18 +1,45 @@
 package ch.dorf10.snake;
 
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 
 import javax.swing.JPanel;
 
-public class Spielfeld extends JPanel{
+public class Spielfeld extends JPanel implements KeyListener{
 	
 	private static final long serialVersionUID = 1134775569216322572L;
 	private Game game;
+	private Map<Integer, Boolean> keyStates = new HashMap<Integer, Boolean>();
+	private List<KeyEvent> inputEvents = new ArrayList<KeyEvent>();
 
 	public Spielfeld(Game game) {
 		super();
 		this.game = game;
 		this.setFocusable(true);
+	}
+	
+	public void startGameLoop() {
+		while(true) {
+			double lastTime = System.currentTimeMillis();
+			while (true) {
+				double current = System.currentTimeMillis();
+				double elapsed = current - lastTime;
+			
+				game.processInput(inputEvents);
+				game.update(elapsed);
+				repaint();
+				
+				lastTime = current;
+			}
+		}
 	}
 		
 	/**
@@ -25,5 +52,22 @@ public class Spielfeld extends JPanel{
 		game.setSize(getSize());
 		game.draw(g);
 	}
-	
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		//keyStates.put(arg0.getKeyCode(), true);
+		inputEvents.add(arg0);
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		//keyStates.put(arg0.getKeyCode(), false);
+		inputEvents.add(arg0);
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

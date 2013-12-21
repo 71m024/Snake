@@ -1,6 +1,7 @@
 package ch.dorf10.snake;
 
 import java.awt.Rectangle;
+import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 
@@ -18,58 +19,21 @@ public class GUI extends JFrame {
 	private Game game;
 
 
+
     /**
      * Konstruktor. Initialisiert den Frame. Registriert das Game-Objekt
      * als KeyListener.
      */
     public GUI() {
         setTitle("Snake Timo");
-        setBounds(new Rectangle(720, 720));
+        setBounds(new Rectangle(595, 624));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         game = new Game(getBounds().getSize());
         spielfeld = new Spielfeld(game);
         setContentPane(spielfeld);
         setVisible(true);
-        spielfeld.addKeyListener(game.getKeyListener());
-        startGameLoop();
+        setFocusable(true);
+        addKeyListener(spielfeld);
+        spielfeld.startGameLoop();
     }
-    
-    private void startGameLoop() {
-    	new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while(true) {
-					double lastTime = System.currentTimeMillis();
-					while (true)
-					{
-					  double current = System.currentTimeMillis();
-					  double elapsed = current - lastTime;
-					  GUI.this.game.update(elapsed);
-					  GUI.this.spielfeld.repaint();
-					  
-					  lastTime = current;
-					}
-				}
-			}
-    		
-    	}).start();
-    }
-
-    /**
-     * Gibt die Breite des Spielfeldes zur?ck.
-     * @return Breite des Spielfeldes.
-     */
-    public int getBreite() {
-        return spielfeld.getWidth();
-    }
-
-    /**
-     * Gibt die H?he des Spielfeldes zur?ck.
-     * @return H?he des Spielfeldes
-     */
-    public int getHoehe() {
-        return spielfeld.getHeight();
-    }
-
 }

@@ -2,13 +2,22 @@ package ch.dorf10.snake;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 
-public class SchlangenKopf extends SchlangenGlied implements KeyListener{
+public class SchlangenKopf extends SchlangenGlied {
 	
 	private static final long serialVersionUID = 8288992889070558225L;
+	
+	public static final Point DIRECTION_LEFT = new Point(-1, 0);
+	public static final Point DIRECTION_UP = new Point(0, -1);
+	public static final Point DIRECTION_RIGHT = new Point(1, 0);
+	public static final Point DIRECTION_DOWN = new Point(0, 1);
+	public static final Point DIRECTION_START = DIRECTION_RIGHT;
+	
+	protected Point direction;
 	
 	private boolean alive = true;
 	private int stomache = 0;
@@ -25,6 +34,19 @@ public class SchlangenKopf extends SchlangenGlied implements KeyListener{
 	public void eatDiamant(Diamant dia) {
 		stomache += dia.getPoints();
 		dia.setCatched();
+	}
+	
+	public void setDirection(Point direction) {
+		if (direction.equals(invertDirection(this.direction))) {
+			invert();
+		} else {
+			this.direction = direction;
+		}
+	}
+	
+	@Override
+	public Point getDirection() {
+		return direction;
 	}
 	
 	@Override
@@ -49,33 +71,21 @@ public class SchlangenKopf extends SchlangenGlied implements KeyListener{
 		g.fillOval((int)(masse.getX() + masse.getWidth() * 0.2), (int)(masse.getY() + masse.getHeight() * 0.4), (int)(masse.getWidth() / 6), (int)(masse.getHeight() / 6));
 		g.fillOval((int)(masse.getX() + masse.getWidth() * 0.7), (int)(masse.getY() + masse.getHeight() * 0.4), (int)(masse.getWidth() / 6), (int)(masse.getHeight() / 6));
 	}
-
-	@Override
-	public void keyPressed(KeyEvent arg0) {
-		switch (arg0.getKeyCode()) {
-		case KeyEvent.VK_LEFT:
-			direction = SchlangenKopf.DIRECTION_LEFT;
-			break;
-		case KeyEvent.VK_UP:
-			direction = SchlangenKopf.DIRECTION_UP;
-			break;
-		case KeyEvent.VK_RIGHT:
-			direction = SchlangenKopf.DIRECTION_RIGHT;
-			break;
-		case KeyEvent.VK_DOWN:
-			direction = SchlangenKopf.DIRECTION_DOWN;
+	
+	public void invert() {
+		List<SchlangenGlied> glieder = new ArrayList<SchlangenGlied>();
+		addAllGlieder(glieder);
+		while (glieder.size() > 1) {
+			
+			SchlangenGlied firstGlied = glieder.get(0);
+			SchlangenGlied lastGlied = glieder.get(glieder.size() - 1);
+			
+			Point tmpLocation = firstGlied.getLocation();
+			firstGlied.setLocation(lastGlied.getLocation());
+			lastGlied.setLocation(tmpLocation);
+			
+			glieder.remove(firstGlied);
+			glieder.remove(lastGlied);
 		}
 	}
-
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-		
-	}
-
 }

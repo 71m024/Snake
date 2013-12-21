@@ -5,9 +5,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class Game {
 	
@@ -16,6 +21,7 @@ public class Game {
     private Spielgrenze spielgrenze;
     private double elapse = 0;
     private IntHolder unit = new IntHolder(-1);
+    private Map<Integer, Point> keyMapping = new HashMap<Integer, Point>();
     
     public static final int MOVE_TIME_MILLS = 300;
     public static final Dimension FIELD_DIMENSION = new Dimension(20, 20);
@@ -26,6 +32,7 @@ public class Game {
     
     public Game(Dimension size) {
     	generateUnit(size);
+    	initKeyMapping();
     	Dimension spielgrenzeSize = new Dimension(FIELD_DIMENSION.width, FIELD_DIMENSION.height);
     	spielgrenze = new Spielgrenze(
     			new Rectangle(new Point(1, 1), spielgrenzeSize),
@@ -53,12 +60,15 @@ public class Game {
     	gameElements.add(schlange);
     }
     
-    private int getRandomNumber(int min, int max) {
-    	return Zufallsgenerator.zufallszahl(min, max);
+    private void initKeyMapping() {
+    	keyMapping.put(KeyEvent.VK_UP, SchlangenKopf.DIRECTION_UP);
+    	keyMapping.put(KeyEvent.VK_DOWN, SchlangenKopf.DIRECTION_DOWN);
+    	keyMapping.put(KeyEvent.VK_RIGHT, SchlangenKopf.DIRECTION_RIGHT);
+    	keyMapping.put(KeyEvent.VK_LEFT, SchlangenKopf.DIRECTION_LEFT);
     }
     
-    public KeyListener getKeyListener() {
-    	return schlange;
+    private int getRandomNumber(int min, int max) {
+    	return Zufallsgenerator.zufallszahl(min, max);
     }
     
     public void update(double elapse) {
@@ -66,13 +76,16 @@ public class Game {
     	while (this.elapse > MOVE_TIME_MILLS) {
     		this.elapse -= MOVE_TIME_MILLS;
     		
+    		for (GameElement element : gameElements) {
+    			element.colides(schlange);
+    		}
+    		
     		schlange.move();
     	}
     }
 
     public void draw(Graphics g) {
     	for (GameElement gameElement : gameElements) {
-    		gameElement.colides(schlange);
     		gameElement.draw(g);
     	}
     }
@@ -83,5 +96,16 @@ public class Game {
 	
 	public void generateUnit(Dimension size) {
 		unit.set(size.width < size.height ? size.width / (FIELD_DIMENSION.width + 2) : size.height / (FIELD_DIMENSION.height + 2));
+	}
+
+	public void processInput(List<KeyEvent> events) {
+		
+		List<KeyEvent> impEvents = new ArrayList<KeyEvent>(events);
+		events.clear();
+
+		for (KeyEvent event : impEvents) {
+			schlange.setDirection(keyMapping.get(event.getKeyCode()));
+		}
+		
 	}
 }
