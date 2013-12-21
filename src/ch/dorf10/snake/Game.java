@@ -6,11 +6,9 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -98,14 +96,16 @@ public class Game {
 		unit.set(size.width < size.height ? size.width / (FIELD_DIMENSION.width + 2) : size.height / (FIELD_DIMENSION.height + 2));
 	}
 
-	public void processInput(List<KeyEvent> events) {
+	public void processInput(Deque<KeyEvent> events) {
 		
-		List<KeyEvent> impEvents = new ArrayList<KeyEvent>(events);
-		events.clear();
+		int eventNumber = events.size();
 
-		for (KeyEvent event : impEvents) {
-			schlange.setDirection(keyMapping.get(event.getKeyCode()));
+		for (int i = 0; i < eventNumber; i++) {
+			KeyEvent event = events.pollFirst();
+			Point direction = keyMapping.get(event.getKeyCode());
+			if (direction != null) {
+				schlange.setDirection(direction);
+			}
 		}
-		
 	}
 }

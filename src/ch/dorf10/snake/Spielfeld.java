@@ -17,8 +17,7 @@ public class Spielfeld extends JPanel implements KeyListener{
 	
 	private static final long serialVersionUID = 1134775569216322572L;
 	private Game game;
-	private Map<Integer, Boolean> keyStates = new HashMap<Integer, Boolean>();
-	private List<KeyEvent> inputEvents = new ArrayList<KeyEvent>();
+	private Deque<KeyEvent> inputEvents = new LinkedList<KeyEvent>();
 
 	public Spielfeld(Game game) {
 		super();
@@ -55,14 +54,12 @@ public class Spielfeld extends JPanel implements KeyListener{
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		//keyStates.put(arg0.getKeyCode(), true);
-		inputEvents.add(arg0);
+		inputEvents.addLast(arg0);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		//keyStates.put(arg0.getKeyCode(), false);
-		inputEvents.add(arg0);
+		
 	}
 
 	@Override

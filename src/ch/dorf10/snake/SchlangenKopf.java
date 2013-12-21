@@ -16,9 +16,11 @@ public class SchlangenKopf extends SchlangenGlied {
 	public static final Point DIRECTION_RIGHT = new Point(1, 0);
 	public static final Point DIRECTION_DOWN = new Point(0, 1);
 	public static final Point DIRECTION_START = DIRECTION_RIGHT;
+	public static final int INVERT_FREQUENCY_MAX = 5;
 	
 	protected Point direction;
 	
+	private int invertedBevoreMoves = 0;
 	private boolean alive = true;
 	private int stomache = 0;
 
@@ -38,7 +40,10 @@ public class SchlangenKopf extends SchlangenGlied {
 	
 	public void setDirection(Point direction) {
 		if (direction.equals(invertDirection(this.direction))) {
-			invert();
+			if (invertedBevoreMoves >= INVERT_FREQUENCY_MAX) {
+				this.direction = invertDirection(getLastGlied().getDirection());
+				invert();
+			}
 		} else {
 			this.direction = direction;
 		}
@@ -57,6 +62,7 @@ public class SchlangenKopf extends SchlangenGlied {
 				stomache--;
 			}
 			super.move();
+			invertedBevoreMoves ++;
 		}
 	}
 	
@@ -73,6 +79,7 @@ public class SchlangenKopf extends SchlangenGlied {
 	}
 	
 	public void invert() {
+		invertedBevoreMoves = 0;
 		List<SchlangenGlied> glieder = new ArrayList<SchlangenGlied>();
 		addAllGlieder(glieder);
 		while (glieder.size() > 1) {
@@ -87,5 +94,12 @@ public class SchlangenKopf extends SchlangenGlied {
 			glieder.remove(firstGlied);
 			glieder.remove(lastGlied);
 		}
+	}
+	
+	public static Point invertDirection(Point direction) {
+		Point newDirection = (Point) direction.clone();
+		newDirection.x *= -1;
+		newDirection.y *= -1;
+		return newDirection;
 	}
 }

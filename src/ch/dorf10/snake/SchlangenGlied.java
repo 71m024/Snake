@@ -79,11 +79,11 @@ public class SchlangenGlied extends GameElement {
 	}
 	
 	public void move() {
-		this.x += getDirection().getX() * width;
-		this.y += getDirection().getY() * height;
 		if (nextGlied != null) {
 			nextGlied.move();
 		}
+		this.x += getDirection().getX() * width;
+		this.y += getDirection().getY() * height;
 	}
     
 	public void draw(Graphics g) {
@@ -116,17 +116,26 @@ public class SchlangenGlied extends GameElement {
 		}
 	}
 	
-	public static Point invertDirection(Point direction) {
-		Point newDirection = (Point) direction.clone();
-		newDirection.x *= -1;
-		newDirection.y *= -1;
-		return newDirection;
+	public SchlangenGlied getLastGlied() {
+		if (nextGlied != null) {
+			return nextGlied.getLastGlied();
+		} else {
+			return this;
+		}
+	}
+	
+	public SchlangenGlied getFirstGlied() {
+		if (previousGlied != null) {
+			return previousGlied.getFirstGlied();
+		} else {
+			return this;
+		}
 	}
 
 	@Override
 	public boolean colides(SchlangenKopf head) {
 		if (super.colides(head) ? true : (nextGlied == null ? false : nextGlied.colides(head))) {
-			//head.die();
+			head.die();
 			return true;
 		}
 		return false;
