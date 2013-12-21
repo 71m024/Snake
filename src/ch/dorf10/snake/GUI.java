@@ -19,10 +19,11 @@ public class GUI extends JFrame implements GameListener{
 
     public GUI() {
         setTitle("Snake Timo");
-        setBounds(new Rectangle(595, 624));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
         setFocusable(true);
+        setBounds(new Rectangle(595, 624));
+        setExtendedState(this.MAXIMIZED_BOTH);         
         
         game = new Game(getBounds().getSize());
         spielfeld = new Spielfeld(game);
