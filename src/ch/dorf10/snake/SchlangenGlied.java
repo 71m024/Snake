@@ -6,6 +6,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 
+import org.omg.CORBA.IntHolder;
+
 public class SchlangenGlied extends GameElement {
 
 	private static final long serialVersionUID = 6662504687803015816L;
@@ -130,6 +132,10 @@ public class SchlangenGlied extends GameElement {
 		} else {
 			return this;
 		}
+	}
+	
+	public int getFollowingGlieder() {
+		return nextGlied != null ? nextGlied.getFollowingGlieder() + 1 : 1;
 	}
 
 	@Override

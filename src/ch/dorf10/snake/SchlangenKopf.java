@@ -7,6 +7,8 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omg.CORBA.IntHolder;
+
 public class SchlangenKopf extends SchlangenGlied {
 	
 	private static final long serialVersionUID = 8288992889070558225L;
@@ -16,7 +18,7 @@ public class SchlangenKopf extends SchlangenGlied {
 	public static final Point DIRECTION_RIGHT = new Point(1, 0);
 	public static final Point DIRECTION_DOWN = new Point(0, 1);
 	public static final Point DIRECTION_START = DIRECTION_RIGHT;
-	public static final int INVERT_FREQUENCY_MAX = 5;
+	public static final int INVERT_FREQUENCY_MAX = 2;
 	
 	protected Point direction;
 	
@@ -49,6 +51,32 @@ public class SchlangenKopf extends SchlangenGlied {
 		}
 	}
 	
+	public void invert() {
+		invertedBevoreMoves = 0;
+		List<SchlangenGlied> glieder = new ArrayList<SchlangenGlied>();
+		addAllGlieder(glieder);
+		while (glieder.size() > 1) {
+			
+			SchlangenGlied firstGlied = glieder.get(0);
+			SchlangenGlied lastGlied = glieder.get(glieder.size() - 1);
+			
+			Point tmpLocation = firstGlied.getLocation();
+			firstGlied.setLocation(lastGlied.getLocation());
+			lastGlied.setLocation(tmpLocation);
+			
+			glieder.remove(firstGlied);
+			glieder.remove(lastGlied);
+		}
+	}
+	
+	public boolean isAlive() {
+		return alive;
+	}
+	
+	public int getLength() {
+		return getFollowingGlieder();
+	}
+	
 	@Override
 	public Point getDirection() {
 		return direction;
@@ -76,24 +104,6 @@ public class SchlangenKopf extends SchlangenGlied {
 		g.setColor(Color.WHITE);
 		g.fillOval((int)(masse.getX() + masse.getWidth() * 0.2), (int)(masse.getY() + masse.getHeight() * 0.4), (int)(masse.getWidth() / 6), (int)(masse.getHeight() / 6));
 		g.fillOval((int)(masse.getX() + masse.getWidth() * 0.7), (int)(masse.getY() + masse.getHeight() * 0.4), (int)(masse.getWidth() / 6), (int)(masse.getHeight() / 6));
-	}
-	
-	public void invert() {
-		invertedBevoreMoves = 0;
-		List<SchlangenGlied> glieder = new ArrayList<SchlangenGlied>();
-		addAllGlieder(glieder);
-		while (glieder.size() > 1) {
-			
-			SchlangenGlied firstGlied = glieder.get(0);
-			SchlangenGlied lastGlied = glieder.get(glieder.size() - 1);
-			
-			Point tmpLocation = firstGlied.getLocation();
-			firstGlied.setLocation(lastGlied.getLocation());
-			lastGlied.setLocation(tmpLocation);
-			
-			glieder.remove(firstGlied);
-			glieder.remove(lastGlied);
-		}
 	}
 	
 	public static Point invertDirection(Point direction) {

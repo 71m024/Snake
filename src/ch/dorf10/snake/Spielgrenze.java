@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
+import org.omg.CORBA.IntHolder;
+
 public class Spielgrenze extends GameElement {
 	
 	private static final long serialVersionUID = -4765133453327219906L;
@@ -14,10 +16,10 @@ public class Spielgrenze extends GameElement {
 
 	public void draw(Graphics g) {
 		Rectangle bounds = getAbsoluteRect();
-		g.setColor(new Color(226, 255, 255));
-		g.fillRect((int)bounds.getX(), (int)bounds.getY(), (int)bounds.getWidth(), (int)bounds.getHeight());
+		g.setColor(new Color(255, 245, 230));
+		g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 		g.setColor(Color.black);
-		g.drawRect((int)bounds.getX(), (int)bounds.getY(), (int)bounds.getWidth(), (int)bounds.getHeight());
+		g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 	
 	@Override

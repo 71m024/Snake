@@ -9,34 +9,42 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import org.omg.CORBA.IntHolder;
 
 public class Game {
 	
     private List<GameElement> gameElements = new ArrayList<GameElement> ();
     private SchlangenKopf schlange;
-    private Spielgrenze spielgrenze;
-    private double elapse = 0;
+    private Set<Diamant> diamanten = new HashSet<Diamant>();
+    private double elapsed = 0;
     private IntHolder unit = new IntHolder(-1);
     private Map<Integer, Point> keyMapping = new HashMap<Integer, Point>();
+    private Set<GameListener> listeners = new HashSet<GameListener>();
+    private int fps;
     
-    public static final int MOVE_TIME_MILLS = 300;
+    public static final int MOVE_TIME_MILLS = 150;
     public static final Dimension FIELD_DIMENSION = new Dimension(20, 20);
-    public static final int DIAMONDS_NUMER_MAX = 50;
-    public static final int DIAMONDS_NUMER_MIN = 50;
+    public static final int DIAMONDS_NUMBER_MAX = 50;
+    public static final int DIAMONDS_NUMBER_MIN = 50;
     public static final int DIAMONDS_POINTS_MIN = 1;
     public static final int DIAMONDS_POINTS_MAX = 3;
+    public static final boolean FPS_SHOW = true;
     
     public Game(Dimension size) {
     	generateUnit(size);
     	initKeyMapping();
     	Dimension spielgrenzeSize = new Dimension(FIELD_DIMENSION.width, FIELD_DIMENSION.height);
-    	spielgrenze = new Spielgrenze(
+    	Spielgrenze spielgrenze = new Spielgrenze(
     			new Rectangle(new Point(1, 1), spielgrenzeSize),
     			unit);
     	
-    	schlange = new SchlangenKopf(new Rectangle(
+    	schlange = new SchlangenKopf(
+    			new Rectangle(
 	    			(int)spielgrenze.getX() + 2,
 	    			(int)spielgrenze.getY() + 2,
 	    			1,
@@ -46,13 +54,15 @@ public class Game {
     	
     	gameElements.add(spielgrenze);
     	
-    	for (int i = 1; i < getRandomNumber(DIAMONDS_NUMER_MIN, DIAMONDS_NUMER_MAX); i++) {
+    	for (int i = 1; i < Zufallsgenerator.zufallszahl(DIAMONDS_NUMBER_MIN, DIAMONDS_NUMBER_MAX) + 1; i++) {
     		Rectangle diamantRect = new Rectangle(
-    				(int)spielgrenze.getX() + getRandomNumber(0, FIELD_DIMENSION.width - 1),
-    				(int)spielgrenze.getY() + getRandomNumber(0, FIELD_DIMENSION.height - 1),
+    				(int)spielgrenze.getX() + Zufallsgenerator.zufallszahl(0, FIELD_DIMENSION.width - 1),
+    				(int)spielgrenze.getY() + Zufallsgenerator.zufallszahl(0, FIELD_DIMENSION.height - 1),
     				1,
     				1);
-    		gameElements.add(new Diamant(diamantRect, unit, getRandomNumber(DIAMONDS_POINTS_MIN, DIAMONDS_POINTS_MAX)));
+    		Diamant newDiamant = new Diamant(diamantRect, unit, Zufallsgenerator.zufallszahl(DIAMONDS_POINTS_MIN, DIAMONDS_POINTS_MAX));
+    		gameElements.add(newDiamant);
+    		diamanten.add(newDiamant);
     	}
     	
     	gameElements.add(schlange);
@@ -65,14 +75,10 @@ public class Game {
     	keyMapping.put(KeyEvent.VK_LEFT, SchlangenKopf.DIRECTION_LEFT);
     }
     
-    private int getRandomNumber(int min, int max) {
-    	return Zufallsgenerator.zufallszahl(min, max);
-    }
-    
-    public void update(double elapse) {
-    	this.elapse += elapse;
-    	while (this.elapse > MOVE_TIME_MILLS) {
-    		this.elapse -= MOVE_TIME_MILLS;
+    public void update(double elapsed) {
+    	this.elapsed += elapsed;
+    	while (this.elapsed > MOVE_TIME_MILLS) {
+    		this.elapsed -= MOVE_TIME_MILLS;
     		
     		for (GameElement element : gameElements) {
     			element.colides(schlange);
@@ -80,11 +86,39 @@ public class Game {
     		
     		schlange.move();
     	}
+    	
+    	//check if there are catchable diamonds
+    	boolean catchableDias = false;
+    	for (Diamant dia : diamanten) {
+    		if (!dia.isCatched()) {
+    			catchableDias = true;
+    		}
+    	}
+    	if (!catchableDias) {
+    		for (GameListener listener : listeners) {
+    			listener.win(new GameEvent(schlange.getLength()));
+    		}
+    	}
+    	
+    	//check if game is lost
+    	if (!schlange.isAlive()) {
+    		for (GameListener listener : listeners) {
+    			listener.loose(new GameEvent(schlange.getLength()));
+    		}
+    	}
+    	
+    	//update fps
+    	fps = (int) (1000 / elapsed);
     }
 
     public void draw(Graphics g) {
     	for (GameElement gameElement : gameElements) {
     		gameElement.draw(g);
+    	}
+    	if (FPS_SHOW) {
+    		g.setColor(Color.RED);
+    		int position = unit.value * 2;
+    		g.drawString("FPS: " + Integer.toString(fps), position, position);
     	}
     }
 
@@ -93,7 +127,7 @@ public class Game {
 	}
 	
 	public void generateUnit(Dimension size) {
-		unit.set(size.width < size.height ? size.width / (FIELD_DIMENSION.width + 2) : size.height / (FIELD_DIMENSION.height + 2));
+		unit.value = (size.width < size.height ? size.width / (FIELD_DIMENSION.width + 2) : size.height / (FIELD_DIMENSION.height + 2));
 	}
 
 	public void processInput(Deque<KeyEvent> events) {
@@ -107,5 +141,9 @@ public class Game {
 				schlange.setDirection(direction);
 			}
 		}
+	}
+	
+	public void addGameListener(GameListener listener) {
+		listeners.add(listener);
 	}
 }

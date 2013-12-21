@@ -1,9 +1,10 @@
 package ch.dorf10.snake;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+
+import org.omg.CORBA.IntHolder;
 
 public class Diamant extends GameElement {
 
@@ -25,6 +26,10 @@ public class Diamant extends GameElement {
 		catched = true;
 	}
 	
+	public boolean isCatched() {
+		return catched;
+	}
+	
 	@Override
 	public boolean colides(SchlangenKopf head) {
 		if (!catched && super.colides(head)) {
@@ -41,13 +46,10 @@ public class Diamant extends GameElement {
 			
 			g.setColor(Color.cyan);
 			g.fillOval(
-					(int)masse.getX(),
-					(int)masse.getY(),
-					(int)masse.getWidth(),
-					(int)masse.getHeight());
-//			g.setColor(Color.black);
-//			g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-//			g.drawString(Integer.toString(points), (int)masse.getX() + (int)(masse.getWidth() / 2.6), (int)masse.getY() + (int)(masse.getHeight() / 1.4));
+				(int)masse.getX(),
+				(int)masse.getY(),
+				(int)masse.getWidth(),
+				(int)masse.getHeight());
 		}
 	}
 }

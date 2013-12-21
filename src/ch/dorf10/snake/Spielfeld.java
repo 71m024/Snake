@@ -3,13 +3,8 @@ package ch.dorf10.snake;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
 
 import javax.swing.JPanel;
 
@@ -18,6 +13,7 @@ public class Spielfeld extends JPanel implements KeyListener{
 	private static final long serialVersionUID = 1134775569216322572L;
 	private Game game;
 	private Deque<KeyEvent> inputEvents = new LinkedList<KeyEvent>();
+	private boolean gameLoopRunning = false;
 
 	public Spielfeld(Game game) {
 		super();
@@ -26,19 +22,22 @@ public class Spielfeld extends JPanel implements KeyListener{
 	}
 	
 	public void startGameLoop() {
-		while(true) {
-			double lastTime = System.currentTimeMillis();
-			while (true) {
-				double current = System.currentTimeMillis();
-				double elapsed = current - lastTime;
+		gameLoopRunning = true;
+		double lastTime = System.currentTimeMillis();
+		while (gameLoopRunning) {
+			double current = System.currentTimeMillis();
+			double elapsed = current - lastTime;
+		
+			game.processInput(inputEvents);
+			game.update(elapsed);
+			repaint();
 			
-				game.processInput(inputEvents);
-				game.update(elapsed);
-				repaint();
-				
-				lastTime = current;
-			}
+			lastTime = current;
 		}
+	}
+	
+	public void stopGameLoop() {
+		gameLoopRunning = false;
 	}
 		
 	/**
