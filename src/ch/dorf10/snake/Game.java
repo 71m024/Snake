@@ -27,12 +27,12 @@ public class Game {
     private Set<GameListener> listeners = new HashSet<GameListener>();
     private int fps;
     
-    public static final int MOVE_TIME_MILLS = 150;
-    public static final Dimension FIELD_DIMENSION = new Dimension(20, 20);
+    public static final int MOVE_TIME_MILLS = 200;
+    public static final Dimension FIELD_DIMENSION = new Dimension(25, 25);
     public static final int DIAMONDS_NUMBER_MAX = 50;
-    public static final int DIAMONDS_NUMBER_MIN = 50;
-    public static final int DIAMONDS_POINTS_MIN = 1;
-    public static final int DIAMONDS_POINTS_MAX = 3;
+    public static final int DIAMONDS_NUMBER_MIN = 40;
+    public static final int DIAMONDS_POINTS_MIN = 3;
+    public static final int DIAMONDS_POINTS_MAX = 5;
     public static final boolean FPS_SHOW = true;
     
     public Game(Dimension size) {

@@ -1,5 +1,6 @@
 package ch.dorf10.snake;
 
+import java.awt.Frame;
 import java.awt.Rectangle;
 
 import javax.swing.JFrame;
@@ -23,7 +24,7 @@ public class GUI extends JFrame implements GameListener{
         setVisible(true);
         setFocusable(true);
         setBounds(new Rectangle(595, 624));
-        setExtendedState(this.MAXIMIZED_BOTH);         
+        setExtendedState(Frame.MAXIMIZED_BOTH);         
         
         game = new Game(getBounds().getSize());
         spielfeld = new Spielfeld(game);
