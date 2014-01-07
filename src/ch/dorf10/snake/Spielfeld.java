@@ -14,7 +14,7 @@ public class Spielfeld extends JPanel implements KeyListener{
 	private Game game;
 	private Deque<KeyEvent> inputEvents = new LinkedList<KeyEvent>();
 	private boolean gameLoopRunning = false;
-	public static final boolean FPS_MAX_ON = false;
+	public static final boolean FPS_MAX_ON = true;
 
 	public Spielfeld(Game game) {
 		super();
@@ -37,9 +37,9 @@ public class Spielfeld extends JPanel implements KeyListener{
 					game.update(elapsed);
 					repaint();
 					
-					if (!FPS_MAX_ON) {
+					if (FPS_MAX_ON) {
 						try {
-							Thread.sleep(20);
+							Thread.sleep(1);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
