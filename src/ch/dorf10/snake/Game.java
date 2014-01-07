@@ -27,7 +27,7 @@ public class Game {
     private Set<GameListener> listeners = new HashSet<GameListener>();
     private int fps;
     
-    public static final int MOVE_TIME_MILLS = 200;
+    public static final int MOVE_TIME_MILLS = 100;
     public static final Dimension FIELD_DIMENSION = new Dimension(25, 25);
     public static final int DIAMONDS_NUMBER_MAX = 50;
     public static final int DIAMONDS_NUMBER_MIN = 40;
